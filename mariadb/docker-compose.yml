@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  Maria: 
+    # build: .
+    image: mariadb:10.5.9-focal
+    container_name: MariaDB
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+      # - ./pgcfg/postgres.conf:/etc/postgresql/postgresql.conf
+    environment:
+      TZ: "Asia/Taipei"
+      MYSQL_ROOT_PASSWORD: "123456"
+    networks:
+      - mariadb-net
+    # network_mode: host
+
+  Adminer: 
+    # build: .
+    image: adminer
+    container_name: Adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    # volumes:
+      # - ./conf/:/conf:rw
+    environment:
+      TZ: "Asia/Taipei"
+    networks:
+      - mariadb-net
+    # network_mode: host
+
+networks:
+  mariadb-net:
