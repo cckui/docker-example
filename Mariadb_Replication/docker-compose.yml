@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  MariaDB-Master: 
+    image: mariadb:10.5.9-focal
+    container_name: db1
+    # container_name: MariaDB-Master
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb_data/master:/var/lib/mysql:rw
+      - ./master.cnf:/tmp/my.cnf:ro
+      - ./start.sh:/start.sh
+      # - ./config/master:/etc/mysql/conf.d
+    environment:
+      TZ: "Asia/Taipei"
+      MYSQL_ROOT_PASSWORD: "123"
+    networks:
+      - mariadb-net
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "50m"
+        max-file: "2"
+    entrypoint: ["sh","/start.sh"]
+    # command: >
+    #     bash -c "
+    #     cp /tmp/*.cnf /etc/mysql/my.cnf
+    #     && chmod 644 /etc/mysql/my.cnf
+    #     && /usr/local/bin/docker-entrypoint.sh mariadbd
+    #     "
+
+  MariaDB-Slave:
+    image: mariadb:10.5.9-focal
+    container_name: db2
+    # container_name: MariaDB-Slave
+    restart: always
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mariadb_data/slave:/var/lib/mysql:rw
+      - ./slave.cnf:/tmp/my.cnf:ro
+      - ./start.sh:/start.sh
+      # - ./config/slave/:/etc/mysql/conf.d
+    environment:
+      TZ: "Asia/Taipei"
+      MYSQL_ROOT_PASSWORD: "123"
+    networks:
+      - mariadb-net
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "50m"
+        max-file: "2"
+    entrypoint: ["sh","/start.sh"]
+    # command: >
+    #     bash -c "
+    #     cp /tmp/*.cnf /etc/mysql/my.cnf
+    #     && chmod 644 /etc/mysql/my.cnf
+    #     && /usr/local/bin/docker-entrypoint.sh mariadbd
+    #     "
+
+  Adminer: 
+    image: adminer
+    container_name: Adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: "Asia/Taipei"
+    networks:
+      - mariadb-net
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "50m"
+        max-file: "2"
+
+networks:
+  mariadb-net:
