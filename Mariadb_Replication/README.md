@@ -31,12 +31,6 @@ flush privileges;
 show master status;
 ```
 
-## dump db
-```bash
-mysqldump -uroot -p  --all-databases > /tmp/alldb.sql 
-```
-
-
 ---
 
 # Slave
@@ -56,3 +50,64 @@ reset slave;
 ```
 
 [Ref](https://www.jianshu.com/p/a525b4824e8e)
+
+---
+## show max_binlog_size
+```sql
+show variables like 'max_binlog_size';
+```
+
+## show max_binlog_size
+```sql
+SHOW BINARY LOGS;
+SHOW MASTER LOGS;
+```
+
+## dump db
+```bash
+mysqldump -uroot -p  --all-databases > /tmp/alldb.sql 
+```
+
+## check scheduler status
+```sql
+SELECT @@event_scheduler;
+```
+
+## open scheduler
+```sql
+SET GLOBAL event_scheduler = ON;
+```
+
+## show scheduler list
+```sql
+SHOW EVENTS FROM mysql;
+```
+
+
+## set scheduler 
+```sql
+use mysql;
+CREATE EVENT Event_purge_binlog
+ON SCHEDULE EVERY 4 HOUR STARTS '2020-04-02 04:00:00'
+DO
+  PURGE BINARY LOGS BEFORE (NOW() - INTERVAL 4 HOUR);
+```
+
+
+## set scheduler 
+```sql
+-- 刪除某特定時間點之前的 binary log
+PURGE BINARY LOGS BEFORE '2020-04-02 20:40';
+ 
+-- 刪除今天以前的 binary log
+PURGE BINARY LOGS BEFORE DATE(NOW());
+ 
+-- 刪除4小時之前的 binary log
+PURGE BINARY LOGS BEFORE (NOW() - INTERVAL 4 HOUR);
+
+-- 刪除binlog.000058 之前的 binary log
+PURGE MASTER LOGS TO 'binlog.000058'; 
+
+-- 刪除所有的 binary log
+PURGE BINARY LOGS;
+```

@@ -38,5 +38,6 @@ server-id=1
 # bin-log
 log_bin=/var/lib/mysql/bin-log
 log_bin_index=/var/lib/mysql/mysql-bin.index
+max_binlog_size=10K
 ; log_bin=ON
 ; log_bin=mariadb-bin
